@@ -1,9 +1,9 @@
 {
   "phase_index": 0,
   "phase_start_date": "2026-06-08",
-  "mode": "study",
+  "mode": "quiz",
   "quiz_message_id": null,
-  "quiz_sent_date": null,
-  "quiz_phase": null,
+  "quiz_sent_date": "2026-06-08",
+  "quiz_phase": 0,
   "failed_attempts": 0
 }
