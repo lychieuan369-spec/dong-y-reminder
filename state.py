@@ -100,8 +100,9 @@ def advance_day(state: dict, completed_indices: list, tasks_list: list) -> dict:
     # Store pending as strings for tomorrow
     state["_pending_task_strings"] = pending_strings
 
-    # Advance day_index
-    state["day_index"] = state.get("day_index", 0) + 1
+    # Only advance day_index if ALL tasks completed
+    if not pending_strings:
+        state["day_index"] = state.get("day_index", 0) + 1
 
     return state
 

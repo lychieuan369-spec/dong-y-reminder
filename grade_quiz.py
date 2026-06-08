@@ -213,11 +213,22 @@ def process_task_checkin(state: dict, updates: list) -> dict:
     else:
         preview = "  (khong co nhiem vu)"
 
-    confirm_msg = (
-        f"✅ Da ghi nhan {num_done}/{total} nhiem vu hoan thanh.\n"
-        f"Ngay mai:\n{preview}"
-    )
-    send_telegram(confirm_msg)
+    pending = state.get("_pending_task_strings", [])
+    if pending:
+        pending_text = "\n".join(f"  - {t}" for t in pending)
+        confirm_msg = (
+            f"Da hoan thanh {num_done}/{total} nhiem vu.\n\n"
+            f"CHUA XONG — nhac lai ngay mai:\n{pending_text}\n\n"
+            f"Hoan thanh het moi sang bai tiep theo."
+        )
+    else:
+        confirm_msg = (
+            f"Hoan thanh tat ca {total}/{total} nhiem vu!\n\n"
+            f"Ngay mai hoc bai moi:\n{preview}"
+        )
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    import requests as _req
+    _req.post(url, json={"chat_id": CHAT_ID, "text": confirm_msg}, timeout=15)
     print(f"[GradeQuiz] Task checkin: {num_done}/{total} done.")
     return state
 
