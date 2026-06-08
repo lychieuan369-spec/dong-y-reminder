@@ -13,7 +13,7 @@ import datetime
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-from state import load_state, save_state, get_phase_duration_weeks
+from state import load_state, save_state, get_phase_duration_weeks, get_today_tasks, advance_day
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "8815369190:AAGWX03FTic4lq_J5J8Mqn2xFwE7YhwBxP0")
 CHAT_ID   = os.environ.get("CHAT_ID",   "8842938928")
@@ -142,8 +142,92 @@ def build_result_message(grading: dict, phase_index: int, passed: bool,
     return "\n".join(lines)
 
 
+def process_task_checkin(state: dict, updates: list) -> dict:
+    """
+    Look for task completion replies sent after 21:00 today.
+    Patterns: ^[\\d\\s]+$ OR ^done$ (case insensitive).
+    Returns updated state.
+    """
+    today = datetime.date.today()
+    today_str = str(today)
+    tasks_list = get_today_tasks(state)
+
+    if not tasks_list:
+        return state
+
+    # Evening reminder is at 21:00 — look for replies from today
+    task_pattern = re.compile(r'^[\d\s]+$')
+    done_pattern = re.compile(r'^done$', re.IGNORECASE)
+
+    task_reply = None
+    latest_ts = 0
+
+    for update in updates:
+        msg = update.get("message") or update.get("edited_message")
+        if not msg:
+            continue
+        chat_id = str(msg.get("chat", {}).get("id", ""))
+        if chat_id != str(CHAT_ID):
+            continue
+        text = msg.get("text", "").strip()
+        msg_ts = msg.get("date", 0)
+        msg_date = datetime.date.fromtimestamp(msg_ts)
+        if msg_date != today:
+            continue
+        if task_pattern.match(text) or done_pattern.match(text):
+            if msg_ts > latest_ts:
+                latest_ts = msg_ts
+                task_reply = text
+
+    if task_reply is None:
+        print(f"[GradeQuiz] No task checkin reply found for today.")
+        return state
+
+    total = len(tasks_list)
+    if done_pattern.match(task_reply):
+        completed_indices = list(range(1, total + 1))
+        num_done = total
+    else:
+        parts = task_reply.split()
+        completed_indices = []
+        for p in parts:
+            try:
+                idx = int(p)
+                if 1 <= idx <= total:
+                    completed_indices.append(idx)
+            except ValueError:
+                pass
+        num_done = len(completed_indices)
+
+    state = advance_day(state, completed_indices, tasks_list)
+    save_state(state)
+
+    # Preview next day tasks
+    from curriculum import CURRICULUM
+    phase_idx = state.get("phase_index", 0)
+    next_day = state.get("day_index", 0)
+    curriculum_days = CURRICULUM.get(phase_idx, [])
+    if curriculum_days:
+        next_tasks = curriculum_days[next_day % len(curriculum_days)]
+        preview = "\n".join(f"  - {t}" for t in next_tasks)
+    else:
+        preview = "  (khong co nhiem vu)"
+
+    confirm_msg = (
+        f"✅ Da ghi nhan {num_done}/{total} nhiem vu hoan thanh.\n"
+        f"Ngay mai:\n{preview}"
+    )
+    send_telegram(confirm_msg)
+    print(f"[GradeQuiz] Task checkin: {num_done}/{total} done.")
+    return state
+
+
 def main():
     state = load_state()
+
+    # Always process task checkin regardless of mode
+    updates = get_recent_updates(limit=200)
+    state = process_task_checkin(state, updates)
 
     if state["mode"] != "quiz":
         print(f"[GradeQuiz] Mode is '{state['mode']}' — nothing to grade. Exiting.")
@@ -160,8 +244,7 @@ def main():
         save_state(state)
         return
 
-    # Poll for answers
-    updates = get_recent_updates(limit=200)
+    # Poll for answers (reuse already-fetched updates)
     batch_answers = collect_batch_answers(updates, quiz_sent_date)
     num_received = len(batch_answers)
 

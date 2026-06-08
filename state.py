@@ -19,6 +19,9 @@ DEFAULT_STATE = {
     "quiz_message_id": None,
     "quiz_sent_date": None,
     "failed_attempts": 0,
+    "day_index": 0,
+    "pending_tasks": [],
+    "tasks_log": {},
 }
 
 
@@ -48,6 +51,59 @@ def get_phase_duration_weeks(phase_index: int) -> int:
     if phase_index < 0 or phase_index >= len(PHASE_DURATIONS):
         return 999
     return PHASE_DURATIONS[phase_index]
+
+
+def get_today_tasks(state: dict) -> list:
+    """Return list of task strings for today: pending from yesterday + new from curriculum."""
+    from curriculum import CURRICULUM
+    phase_idx = state.get("phase_index", 0)
+    day_index = state.get("day_index", 0)
+    pending_indices = state.get("pending_tasks", [])
+
+    curriculum_days = CURRICULUM.get(phase_idx, [])
+    if not curriculum_days:
+        return []
+
+    # New tasks for today
+    safe_day = day_index % len(curriculum_days)
+    new_tasks = curriculum_days[safe_day]
+
+    # Pending tasks from yesterday (already stored as strings)
+    pending_strings = state.get("_pending_task_strings", [])
+
+    return pending_strings + new_tasks
+
+
+def advance_day(state: dict, completed_indices: list, tasks_list: list) -> dict:
+    """
+    Mark completed tasks, update pending, increment day_index.
+    completed_indices: 1-based indices the user replied with.
+    tasks_list: the full list of tasks sent today (pending + new).
+    Returns updated state.
+    """
+    today_str = str(datetime.date.today())
+
+    # Determine which tasks were done (1-based -> 0-based)
+    done_strings = []
+    pending_strings = []
+    for i, task in enumerate(tasks_list):
+        if (i + 1) in completed_indices:
+            done_strings.append(task)
+        else:
+            pending_strings.append(task)
+
+    # Log completed tasks
+    if "tasks_log" not in state:
+        state["tasks_log"] = {}
+    state["tasks_log"][today_str] = done_strings
+
+    # Store pending as strings for tomorrow
+    state["_pending_task_strings"] = pending_strings
+
+    # Advance day_index
+    state["day_index"] = state.get("day_index", 0) + 1
+
+    return state
 
 
 def is_quiz_time(state: dict) -> bool:

@@ -13,7 +13,7 @@ import random
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-from state import load_state, save_state, is_quiz_time, get_days_in_phase, get_phase_duration_weeks
+from state import load_state, save_state, is_quiz_time, get_days_in_phase, get_phase_duration_weeks, get_today_tasks
 
 # ── Telegram credentials ──────────────────────────────────────────────────────
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "8815369190:AAGWX03FTic4lq_J5J8Mqn2xFwE7YhwBxP0")
@@ -221,6 +221,28 @@ def send_telegram(text: str) -> bool:
 
 # ── Message builders ──────────────────────────────────────────────────────────
 
+def build_tasks_morning_block(state: dict) -> str:
+    tasks = get_today_tasks(state)
+    if not tasks:
+        return ""
+    pending_strings = state.get("_pending_task_strings", [])
+    # Split into pending (carried over) and new (the rest)
+    pending_count = len(pending_strings)
+    new_tasks = tasks[pending_count:]
+    pending_tasks = tasks[:pending_count]
+
+    lines = ["\n📋 NHIEM VU HOM NAY:"]
+    for i, t in enumerate(tasks):
+        lines.append(f"{i+1}. {t}")
+
+    if pending_tasks:
+        lines.append("\n⚠️ Nhac lai tu hom qua:")
+        for t in pending_tasks:
+            lines.append(f"🔁 {t}")
+
+    return "\n".join(lines)
+
+
 def build_morning_message(phase: dict, state: dict) -> str:
     today_str = datetime.date.today().strftime("%d/%m/%Y")
     tip = random.choice(MORNING_PROMPTS)
@@ -236,6 +258,8 @@ def build_morning_message(phase: dict, state: dict) -> str:
             f'  Tai sao: {b["tai_sao"]}\n'
         )
 
+    tasks_block = build_tasks_morning_block(state)
+
     msg = (
         f"[DONG Y — BUOI SANG]  {today_str}\n"
         f"------------------------\n\n"
@@ -243,10 +267,24 @@ def build_morning_message(phase: dict, state: dict) -> str:
         f"Ngay {days+1} / {duration_weeks*7} ({duration_weeks} tuan)\n\n"
         f"<b>Lo trinh hom nay:</b>{books_block}\n"
         f"<b>Trong tam:</b> {phase['focus']}\n\n"
+        f"{tasks_block}\n\n"
         f"<b>Tip:</b>\n{tip}\n\n"
         f"Chuc buoi hoc sau va an tinh!"
     )
     return msg
+
+
+def build_tasks_evening_block(state: dict) -> str:
+    tasks = get_today_tasks(state)
+    if not tasks:
+        return ""
+    lines = ["✅ DIEM DANH NHIEM VU HOM NAY:"]
+    for i, t in enumerate(tasks):
+        lines.append(f"{i+1}. {t}")
+    lines.append("")
+    lines.append("→ Reply so thu tu da hoan thanh (VD: 1 2 3 hoac 1 3)")
+    lines.append("→ Neu xong het reply: done")
+    return "\n".join(lines)
 
 
 def build_evening_message(phase: dict, state: dict) -> str:
@@ -256,12 +294,15 @@ def build_evening_message(phase: dict, state: dict) -> str:
     phase_idx = state["phase_index"]
     duration_weeks = get_phase_duration_weeks(phase_idx)
 
+    tasks_block = build_tasks_evening_block(state)
+
     msg = (
         f"[DONG Y — ON TAP BUOI TOI]  {today_str}\n"
         f"------------------------\n\n"
         f"<b>{phase['name']}</b>\n"
         f"Ngay {days+1} / {duration_weeks*7}\n\n"
         f"<b>Cau hoi on tap:</b>\n{question}\n\n"
+        f"{tasks_block}\n\n"
         f"Nhac nho: Truoc khi ngu, thuc hanh bat mac 5 phut.\n"
         f"Quan sat: nhip, luc, do sau, hinh thai.\n\n"
         f"Kien tri moi ngay — Dai Y se den!"
