@@ -231,12 +231,12 @@ def build_tasks_morning_block(state: dict) -> str:
     new_tasks = tasks[pending_count:]
     pending_tasks = tasks[:pending_count]
 
-    lines = ["\n📋 NHIEM VU HOM NAY:"]
+    lines = ["\n📋 NHIỆM VỤ HÔM NAY:"]
     for i, t in enumerate(tasks):
         lines.append(f"{i+1}. {t}")
 
     if pending_tasks:
-        lines.append("\n⚠️ Nhac lai tu hom qua:")
+        lines.append("\n⚠️ Nhắc lại từ hôm qua:")
         for t in pending_tasks:
             lines.append(f"🔁 {t}")
 
@@ -254,22 +254,22 @@ def build_morning_message(phase: dict, state: dict) -> str:
     for b in phase["books"]:
         books_block += (
             f'\n<a href="{b["url"]}"><b>{b["title"]}</b></a>\n'
-            f'  Doc gi: {b["doc_gi"]}\n'
-            f'  Tai sao: {b["tai_sao"]}\n'
+            f'  Đọc gì: {b["doc_gi"]}\n'
+            f'  Tại sao: {b["tai_sao"]}\n'
         )
 
     tasks_block = build_tasks_morning_block(state)
 
     msg = (
-        f"[DONG Y — BUOI SANG]  {today_str}\n"
+        f"[ĐÔNG Y — BUỔI SÁNG]  {today_str}\n"
         f"------------------------\n\n"
         f"<b>{phase['name']}</b>\n"
-        f"Ngay {days+1} / {duration_weeks*7} ({duration_weeks} tuan)\n\n"
-        f"<b>Lo trinh hom nay:</b>{books_block}\n"
-        f"<b>Trong tam:</b> {phase['focus']}\n\n"
+        f"Ngày {days+1} / {duration_weeks*7} ({duration_weeks} tuần)\n\n"
+        f"<b>Lộ trình hôm nay:</b>{books_block}\n"
+        f"<b>Trọng tâm:</b> {phase['focus']}\n\n"
         f"{tasks_block}\n\n"
         f"<b>Tip:</b>\n{tip}\n\n"
-        f"Chuc buoi hoc sau va an tinh!"
+        f"Chúc buổi học sâu và an tĩnh!"
     )
     return msg
 
@@ -278,12 +278,12 @@ def build_tasks_evening_block(state: dict) -> str:
     tasks = get_today_tasks(state)
     if not tasks:
         return ""
-    lines = ["✅ DIEM DANH NHIEM VU HOM NAY:"]
+    lines = ["✅ ĐIỂM DANH NHIỆM VỤ HÔM NAY:"]
     for i, t in enumerate(tasks):
         lines.append(f"{i+1}. {t}")
     lines.append("")
-    lines.append("→ Reply so thu tu da hoan thanh (VD: 1 2 3 hoac 1 3)")
-    lines.append("→ Neu xong het reply: done")
+    lines.append("→ Reply số thứ tự đã hoàn thành (VD: 1 2 3 hoặc 1 3)")
+    lines.append("→ Nếu xong hết reply: done")
     return "\n".join(lines)
 
 
@@ -297,15 +297,15 @@ def build_evening_message(phase: dict, state: dict) -> str:
     tasks_block = build_tasks_evening_block(state)
 
     msg = (
-        f"[DONG Y — ON TAP BUOI TOI]  {today_str}\n"
+        f"[ĐÔNG Y — ÔN TẬP BUỔI TỐI]  {today_str}\n"
         f"------------------------\n\n"
         f"<b>{phase['name']}</b>\n"
-        f"Ngay {days+1} / {duration_weeks*7}\n\n"
-        f"<b>Cau hoi on tap:</b>\n{question}\n\n"
+        f"Ngày {days+1} / {duration_weeks*7}\n\n"
+        f"<b>Câu hỏi ôn tập:</b>\n{question}\n\n"
         f"{tasks_block}\n\n"
-        f"Nhac nho: Truoc khi ngu, thuc hanh bat mac 5 phut.\n"
-        f"Quan sat: nhip, luc, do sau, hinh thai.\n\n"
-        f"Kien tri moi ngay — Dai Y se den!"
+        f"Nhắc nhở: Trước khi ngủ, thực hành bắt mạch 5 phút.\n"
+        f"Quan sát: nhịp, lực, độ sâu, hình thái.\n\n"
+        f"Kiên trì mỗi ngày — Đại Y sẽ đến!"
     )
     return msg
 
@@ -326,16 +326,16 @@ def send_quiz(phase_index: int):
         end = start + BATCH_SIZE
         batch = questions[start:end]
 
-        lines = [f"KIEM TRA PHASE {phase_index} — Phan {batch_num}/16", ""]
+        lines = [f"KIỂM TRA PHASE {phase_index} — Phần {batch_num}/16", ""]
 
         for i, q in enumerate(batch):
             cau_num = start + i + 1
-            lines.append(f"Cau {cau_num}: {q['q']}")
+            lines.append(f"Câu {cau_num}: {q['q']}")
             for letter, opt_text in q["opts"].items():
                 lines.append(f"{letter}) {opt_text}")
             lines.append("")
 
-        lines.append("-> Tra loi: gui 10 chu cai lien tiep (VD: ABCDABCDAB)")
+        lines.append("-> Trả lời: gửi 10 chữ cái liên tiếp (VD: ABCDABCDAB)")
 
         msg = "\n".join(lines)
         ok = send_telegram(msg)
@@ -345,8 +345,8 @@ def send_quiz(phase_index: int):
         time.sleep(3)
 
     send_telegram(
-        f"Da gui 16 phan de thi (160 cau). "
-        f"Tra loi tung phan bang 10 chu cai. "
+        f"Đã gửi 16 phần đề thi (160 câu). "
+        f"Trả lời từng phần bằng 10 chữ cái. "
         f"Pass: 120/160 (75%)."
     )
 

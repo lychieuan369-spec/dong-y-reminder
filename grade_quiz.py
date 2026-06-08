@@ -121,23 +121,23 @@ def build_result_message(grading: dict, phase_index: int, passed: bool,
     batch_scores = grading["batch_scores"]
 
     batch_line = " | ".join(
-        f"Phan {i+1}: {s}/{BATCH_SIZE}" for i, s in enumerate(batch_scores)
+        f"Phần {i+1}: {s}/{BATCH_SIZE}" for i, s in enumerate(batch_scores)
     )
 
     lines = [
-        f"KET QUA KIEM TRA — Phase {phase_index}",
-        f"Diem: {score}/{total} ({pct}%)",
+        f"KẾT QUẢ KIỂM TRA — Phase {phase_index}",
+        f"Điểm: {score}/{total} ({pct}%)",
         batch_line,
         "",
     ]
 
     if passed:
-        lines.append(f"[PASS] Chuc mung! Tien len Phase {next_phase}.")
+        lines.append(f"[PASS] Chúc mừng! Tiến lên Phase {next_phase}.")
     else:
         dur = repeat_weeks if repeat_weeks else get_phase_duration_weeks(phase_index)
         needed = PASS_THRESHOLD - score
-        lines.append(f"[FAIL] Can on lai. Hoc lai Phase {phase_index} them {dur} tuan.")
-        lines.append(f"(Can them {needed} cau dung de dat 120/160)")
+        lines.append(f"[FAIL] Cần ôn lại. Học lại Phase {phase_index} thêm {dur} tuần.")
+        lines.append(f"(Cần thêm {needed} câu đúng để đạt 120/160)")
 
     return "\n".join(lines)
 
@@ -211,20 +211,20 @@ def process_task_checkin(state: dict, updates: list) -> dict:
         next_tasks = curriculum_days[next_day % len(curriculum_days)]
         preview = "\n".join(f"  - {t}" for t in next_tasks)
     else:
-        preview = "  (khong co nhiem vu)"
+        preview = "  (không có nhiệm vụ)"
 
     pending = state.get("_pending_task_strings", [])
     if pending:
         pending_text = "\n".join(f"  - {t}" for t in pending)
         confirm_msg = (
-            f"Da hoan thanh {num_done}/{total} nhiem vu.\n\n"
-            f"CHUA XONG — nhac lai ngay mai:\n{pending_text}\n\n"
-            f"Hoan thanh het moi sang bai tiep theo."
+            f"Đã hoàn thành {num_done}/{total} nhiệm vụ.\n\n"
+            f"CHƯA XONG — nhắc lại ngày mai:\n{pending_text}\n\n"
+            f"Hoàn thành hết mới sang bài tiếp theo."
         )
     else:
         confirm_msg = (
-            f"Hoan thanh tat ca {total}/{total} nhiem vu!\n\n"
-            f"Ngay mai hoc bai moi:\n{preview}"
+            f"Hoàn thành tất cả {total}/{total} nhiệm vụ!\n\n"
+            f"Ngày mai học bài mới:\n{preview}"
         )
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     import requests as _req
@@ -261,8 +261,8 @@ def main():
 
     if num_received < NUM_BATCHES:
         msg = (
-            f"Moi nhan duoc {num_received}/{NUM_BATCHES} phan tra loi. "
-            f"Can du 8 phan moi cham diem."
+            f"Mới nhận được {num_received}/{NUM_BATCHES} phần trả lời. "
+            f"Cần đủ {NUM_BATCHES} phần mới chấm điểm."
         )
         print(f"[GradeQuiz] {msg}")
         send_telegram(msg)
