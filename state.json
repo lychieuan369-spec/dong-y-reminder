@@ -1,9 +1,12 @@
 {
   "phase_index": 0,
   "phase_start_date": "2026-06-08",
-  "mode": "quiz",
+  "mode": "study",
   "quiz_message_id": null,
   "quiz_sent_date": "2026-06-08",
   "quiz_phase": 0,
-  "failed_attempts": 0
+  "failed_attempts": 0,
+  "day_index": 0,
+  "pending_tasks": [],
+  "tasks_log": {}
 }
