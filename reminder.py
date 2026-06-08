@@ -341,12 +341,6 @@ def main():
     import datetime as dt
     state = load_state()
 
-    on_github_actions = os.environ.get("GITHUB_ACTIONS") == "true"
-
-    # If no state.json on GitHub Actions, default to phase 0 study mode
-    if on_github_actions and state.get("phase_index") is None:
-        state = {"phase_index": 0, "mode": "study", "phase_start_date": str(dt.date.today())}
-
     # Determine session: check SESSION env var first, then fall back to hour detection
     session_env = os.environ.get("SESSION")
     if session_env == "morning":
@@ -372,13 +366,10 @@ def main():
         # Normal study reminder
         if session == "morning":
             send_morning_reminder(state)
-            # Skip state.json write for study reminders on GitHub Actions
-            if not on_github_actions:
-                save_state(state)
+            save_state(state)
         else:
             send_evening_reminder(state)
-            if not on_github_actions:
-                save_state(state)
+            save_state(state)
     else:
         # mode == "quiz" — waiting for user response, grade_quiz.py handles this
         print(f"[DongY] Mode is '{state['mode']}' — waiting for quiz answer. Run grade_quiz.py at 21:30.")
