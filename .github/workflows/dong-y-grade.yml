@@ -1,0 +1,22 @@
+name: Dong Y Grade Quiz
+
+on:
+  schedule:
+    - cron: '30 14 * * *'  # 21:30 ICT (UTC+7)
+  workflow_dispatch:
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install requests
+      - name: Grade quiz
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python grade_quiz.py
