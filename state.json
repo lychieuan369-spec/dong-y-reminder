@@ -1,22 +1,13 @@
 {
-  "phase_index": 0,
-  "phase_start_date": "2026-06-08",
   "mode": "study",
-  "quiz_message_id": null,
-  "quiz_sent_date": "2026-06-08",
-  "quiz_phase": 0,
-  "failed_attempts": 0,
-  "day_index": 2,
+  "phase_index": 0,
+  "day_index": 0,
+  "phase_start_date": "2026-06-08",
   "pending_tasks": [],
-  "tasks_log": {
-    "2026-06-08": [
-      "Ve so do 4 mua <-> Tang Phu",
-      "Bat mach so sanh sang/toi"
-    ]
-  },
-  "_pending_task_strings": [
-    "Doc To Van Chuong 3: Sinh Khi Thong Thien Luan",
-    "Ghi chu ve Duong Khi va benh ly",
-    "Quan sat luoi nguoi than"
-  ]
+  "_pending_task_strings": [],
+  "tasks_log": {},
+  "quiz_message_id": null,
+  "quiz_sent_date": null,
+  "quiz_phase": null,
+  "failed_attempts": 0
 }
