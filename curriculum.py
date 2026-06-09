@@ -5,7 +5,7 @@ CURRICULUM = {
     0: [  # Phase 0 — 8 weeks = 56 days — Noi Kinh Nen Tang
         # Week 1
         ["Đọc Tố Vấn Chương 1: Thuong Co Thien Chan Luan", "Ghi chú 3 khái niệm Âm Dương", "Bắt mạch tay trái 5 phút"],
-        ["Đọc Tố Vấn Chương 2: Tu Khi Dieu Than Luan", "Vẽ sơ đồ 4 mùa <-> Tang Phu", "Bắt mạch so sánh sáng/tối"],
+        ["Đọc Tố Vấn Chương 2: Tu Khi Dieu Than Luan", "Vẽ sơ đồ 4 mùa ↔ Tang Phu", "Bắt mạch so sánh sáng/tối"],
         ["Đọc Tố Vấn Chương 3: Sinh Khi Thong Thien Luan", "Ghi chú về Dương Khí và bệnh lý", "Quan sát lưỡi người thân"],
         ["Đọc Tố Vấn Chương 4: Kim Quy Chan Ngon Luan", "Học thuộc Ngũ Hành tương sinh", "Bắt mạch 10 phút"],
         ["Đọc Tố Vấn Chương 5: Am Duong Ung Tuong Dai Luan (phan 1)", "Ghi chú 5 âm 5 vị 5 sắc", "Tự kiểm tra Ngũ Hành tương khắc"],
@@ -136,7 +136,7 @@ CURRICULUM = {
         ["On tuan 8 — nhat ky mach hoc 7 ngay", "Tìm quy luật cá nhân từ nhật ký mạch", "Bắt mạch + ghi tổng kết"],
         # Week 9 — Ket hop ly thuyet
         ["Đọc lại Mạch Kinh Quyển 3: Bien chung mach benh ly", "Ghi chú 10 biến chứng quan trọng", "Bắt mạch + áp dụng biện chứng"],
-        ["Tổng hợp: mạch Phủ Tạng bệnh lý", "Vẽ bảng mạch <-> chứng tương ứng", "Bắt mạch + nhận định tang bi anh huong"],
+        ["Tổng hợp: mạch Phủ Tạng bệnh lý", "Vẽ bảng mạch ↔ chứng tương ứng", "Bắt mạch + nhận định tang bi anh huong"],
         ["Tổng hợp: mạch Phong Hàn Nhiệt Thấp", "Phân biệt 4 ngoại tác qua mạch", "Bắt mạch vào các thời điểm khác nhau"],
         ["Tổng hợp: mạch Khí Huyết Âm Dương hư", "Ghi chú quy tac phan biet", "Bắt mạch 5 người + nhận định"],
         ["Đọc Nan Kinh Nan 1-22 lan 2 — doc lai voi mat mach hoc", "Ghi chú diem moi phat hien", "Bắt mạch + ứng dụng Nan Kinh"],
@@ -427,7 +427,7 @@ CURRICULUM = {
         ["Đọc Ôn Bệnh Điều Biện: Shu Wen dich On — Thanh Wen Bai Du thang", "Học phương thức điều trị Ôn Dịch", "Ghi chú lịch sử Ôn Dịch Trung Quốc"],
         ["Đọc Ôn Bệnh Điều Biện: Phu tu On (On benh o phu nu co thai)", "Học biến biến đặc biệt phụ từ Ôn", "Bắt mạch phụ nữ + nhận định"],
         ["Đọc Ôn Bệnh Điều Biện: Nhu Ngo (buon ngu qua muc o On benh)", "Ghi chú cơ chế Tâm Khí bị ẩn", "Bắt mạch + nhận định Tam Khi"],
-        ["Tong hop: 6 chung tap cua On Benh hoc can biet", "Viet bang tom tat bien chung <-> phuong tieu", "Bắt mạch + áp dụng"],
+        ["Tong hop: 6 chung tap cua On Benh hoc can biet", "Viet bang tom tat bien chung ↔ phuong tieu", "Bắt mạch + áp dụng"],
         ["Đọc Ôn Nhiệt Luận (tiep tuc): Xu ly nhiet nhap Tam Bao", "Học Ngưu Hoàng Tán và Thanh Cung thang", "Bắt mạch Te Sac — Huyet phan, Tam Bao"],
         ["On tuan 4 — On Dich + tap chung + Tam Bao nhiet", "Viet 5 ca lam sang On Benh", "Bắt mạch tổng hợp"],
         # Week 5-8: Thuc hanh va tong hop
