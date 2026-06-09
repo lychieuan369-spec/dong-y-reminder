@@ -10,7 +10,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 STATE_FILE = r"D:\dong_y_reminder\state.json"
 
-PHASE_DURATIONS = [8, 12, 20, 32, 20, 999]
+PHASE_DURATIONS = [16, 12, 20, 32, 20, 999]
 
 DEFAULT_STATE = {
     "phase_index": 0,
