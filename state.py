@@ -8,7 +8,7 @@ import sys
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-STATE_FILE = r"D:\dong_y_reminder\state.json"
+STATE_FILE = os.environ.get("STATE_FILE", r"D:\dong_y_reminder\state.json")
 
 PHASE_DURATIONS = [16, 12, 20, 32, 20, 999]
 
@@ -40,6 +40,29 @@ def load_state() -> dict:
 def save_state(state: dict):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
+
+
+def save_and_sync(state: dict):
+    """Save state and push to git if GIT_TOKEN is set."""
+    save_state(state)
+    token = os.environ.get("GIT_TOKEN")
+    repo = os.environ.get("GIT_REPO", "lychieuan369-spec/dong-y-reminder")
+    if token:
+        import subprocess
+        try:
+            subprocess.run(["git", "config", "user.email", "bot@railway.app"], check=True, capture_output=True)
+            subprocess.run(["git", "config", "user.name", "DongY Bot"], check=True, capture_output=True)
+            subprocess.run(["git", "remote", "set-url", "origin",
+                          f"https://x-access-token:{token}@github.com/{repo}.git"],
+                         check=True, capture_output=True)
+            subprocess.run(["git", "add", "state.json"], check=True, capture_output=True)
+            result = subprocess.run(["git", "commit", "-m", "state: update [skip ci]"],
+                                   capture_output=True)
+            if result.returncode == 0:
+                subprocess.run(["git", "push"], check=True, capture_output=True)
+                print("[State] Synced to git")
+        except Exception as e:
+            print(f"[State] Git sync failed: {e}")
 
 
 def get_days_in_phase(state: dict) -> int:

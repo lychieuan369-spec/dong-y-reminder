@@ -13,7 +13,7 @@ import datetime
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-from state import load_state, save_state, get_phase_duration_weeks, get_today_tasks, advance_day
+from state import load_state, save_state, save_and_sync, get_phase_duration_weeks, get_today_tasks, advance_day
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "8815369190:AAGWX03FTic4lq_J5J8Mqn2xFwE7YhwBxP0")
 CHAT_ID   = os.environ.get("CHAT_ID",   "8842938928")
@@ -200,7 +200,7 @@ def process_task_checkin(state: dict, updates: list) -> dict:
         num_done = len(completed_indices)
 
     state = advance_day(state, completed_indices, tasks_list)
-    save_state(state)
+    save_and_sync(state)
 
     # Preview next day tasks
     from curriculum import CURRICULUM
@@ -252,7 +252,7 @@ def main():
     if not questions:
         print(f"[GradeQuiz] No quiz for phase {phase_index}. Resetting to study mode.")
         state["mode"] = "study"
-        save_state(state)
+        save_and_sync(state)
         return
 
     # Poll for answers (reuse already-fetched updates)
@@ -291,7 +291,7 @@ def main():
         dur = get_phase_duration_weeks(phase_index)
         result_msg = build_result_message(grading, phase_index, passed=False, repeat_weeks=dur)
 
-    save_state(state)
+    save_and_sync(state)
     ok = send_telegram(result_msg)
     status = "sent" if ok else "FAILED"
     print(f"[GradeQuiz] Result -> Telegram {status}  (score {score}/160, passed={passed})")
