@@ -23,14 +23,11 @@ def run_grade():
     importlib.reload(grade_quiz)
     grade_quiz.main()
 
-scheduler = BlockingScheduler()
-# All times in UTC (Railway server timezone)
-# 7h ICT = 0h UTC
-scheduler.add_job(run_morning, CronTrigger(hour=0,  minute=0))
-# 21h ICT = 14h UTC
-scheduler.add_job(run_evening, CronTrigger(hour=14, minute=0))
-# 21h30 ICT = 14h30 UTC
-scheduler.add_job(run_grade,   CronTrigger(hour=14, minute=30))
+scheduler = BlockingScheduler(timezone='UTC')
+# All times explicit UTC — 7h ICT = 0h UTC, 21h ICT = 14h UTC
+scheduler.add_job(run_morning, CronTrigger(hour=0,  minute=0,  timezone='UTC'))
+scheduler.add_job(run_evening, CronTrigger(hour=14, minute=0,  timezone='UTC'))
+scheduler.add_job(run_grade,   CronTrigger(hour=14, minute=30, timezone='UTC'))
 
 print("Scheduler started (UTC). Morning=0h, Evening=14h, Grade=14h30")
 scheduler.start()
