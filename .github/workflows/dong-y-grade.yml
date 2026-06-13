@@ -1,8 +1,6 @@
 name: Dong Y Grade Quiz
 
 on:
-  schedule:
-    - cron: '30 14 * * *'  # 21:30 ICT (UTC+7)
   workflow_dispatch:
 
 jobs:

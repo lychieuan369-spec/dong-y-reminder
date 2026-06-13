@@ -1,8 +1,6 @@
 name: Dong Y Morning Reminder
 
 on:
-  schedule:
-    - cron: '0 0 * * *'  # 07:00 ICT (UTC+7)
   workflow_dispatch:
 
 jobs:
