@@ -405,11 +405,20 @@ def main():
         send_quiz(state["phase_index"])
     elif state["mode"] == "study":
         # Normal study reminder
+        today = str(datetime.date.today())
         if session == "morning":
+            if state.get("last_morning_sent") == today:
+                print(f"[SKIP] Morning already sent today ({today})")
+                return
             send_morning_reminder(state)
+            state["last_morning_sent"] = today
             save_state(state)
         else:
+            if state.get("last_evening_sent") == today:
+                print(f"[SKIP] Evening already sent today ({today})")
+                return
             send_evening_reminder(state)
+            state["last_evening_sent"] = today
             save_state(state)
     else:
         # mode == "quiz" — waiting for user response, grade_quiz.py handles this

@@ -22,6 +22,8 @@ DEFAULT_STATE = {
     "day_index": 0,
     "pending_tasks": [],
     "tasks_log": {},
+    "last_morning_sent": None,
+    "last_evening_sent": None,
 }
 
 
